@@ -1,5 +1,4 @@
 from datetime import date
-from typing import Dict
 
 class Player:
     def __init__(self, full_name: str, birth_date: date, team: str,
