@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='utf-8'?>
+<players>
+    <player>
+        <full_name>John Doe</full_name>
+        <birth_date>1990-05-25</birth_date>
+        <team>Team A</team>
+        <home_city>City X</home_city>
+        <squad>Squad 1</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Jane Smith</full_name>
+        <birth_date>1992-07-12</birth_date>
+        <team>Team B</team>
+        <home_city>City Y</home_city>
+        <squad>Squad 2</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Michael Johnson</full_name>
+        <birth_date>1988-03-15</birth_date>
+        <team>Team C</team>
+        <home_city>City Z</home_city>
+        <squad>Squad 3</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Emily Davis</full_name>
+        <birth_date>1995-11-30</birth_date>
+        <team>Team D</team>
+        <home_city>City W</home_city>
+        <squad>Squad 4</squad>
+        <position>Goalkeeper</position>
+    </player>
+    <player>
+        <full_name>David Brown</full_name>
+        <birth_date>1991-09-20</birth_date>
+        <team>Team E</team>
+        <home_city>City V</home_city>
+        <squad>Squad 5</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Sarah Wilson</full_name>
+        <birth_date>1993-04-10</birth_date>
+        <team>Team F</team>
+        <home_city>City U</home_city>
+        <squad>Squad 6</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>James Miller</full_name>
+        <birth_date>1989-12-05</birth_date>
+        <team>Team G</team>
+        <home_city>City T</home_city>
+        <squad>Squad 7</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Olivia Taylor</full_name>
+        <birth_date>1994-08-18</birth_date>
+        <team>Team H</team>
+        <home_city>City S</home_city>
+        <squad>Squad 8</squad>
+        <position>Goalkeeper</position>
+    </player>
+    <player>
+        <full_name>Daniel Anderson</full_name>
+        <birth_date>1990-02-22</birth_date>
+        <team>Team I</team>
+        <home_city>City R</home_city>
+        <squad>Squad 9</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Sophia Thomas</full_name>
+        <birth_date>1996-06-14</birth_date>
+        <team>Team J</team>
+        <home_city>City Q</home_city>
+        <squad>Squad 10</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Matthew Jackson</full_name>
+        <birth_date>1987-10-08</birth_date>
+        <team>Team K</team>
+        <home_city>City P</home_city>
+        <squad>Squad 11</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Emma White</full_name>
+        <birth_date>1997-01-25</birth_date>
+        <team>Team L</team>
+        <home_city>City O</home_city>
+        <squad>Squad 12</squad>
+        <position>Goalkeeper</position>
+    </player>
+    <player>
+        <full_name>Christopher Harris</full_name>
+        <birth_date>1992-03-30</birth_date>
+        <team>Team M</team>
+        <home_city>City N</home_city>
+        <squad>Squad 13</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Ava Martin</full_name>
+        <birth_date>1993-07-17</birth_date>
+        <team>Team N</team>
+        <home_city>City M</home_city>
+        <squad>Squad 14</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Andrew Thompson</full_name>
+        <birth_date>1988-05-12</birth_date>
+        <team>Team O</team>
+        <home_city>City L</home_city>
+        <squad>Squad 15</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Isabella Garcia</full_name>
+        <birth_date>1995-09-28</birth_date>
+        <team>Team P</team>
+        <home_city>City K</home_city>
+        <squad>Squad 16</squad>
+        <position>Goalkeeper</position>
+    </player>
+    <player>
+        <full_name>William Martinez</full_name>
+        <birth_date>1991-04-03</birth_date>
+        <team>Team Q</team>
+        <home_city>City J</home_city>
+        <squad>Squad 17</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Mia Robinson</full_name>
+        <birth_date>1994-12-19</birth_date>
+        <team>Team R</team>
+        <home_city>City I</home_city>
+        <squad>Squad 18</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Joseph Clark</full_name>
+        <birth_date>1989-08-07</birth_date>
+        <team>Team S</team>
+        <home_city>City H</home_city>
+        <squad>Squad 19</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Charlotte Rodriguez</full_name>
+        <birth_date>1996-02-14</birth_date>
+        <team>Team T</team>
+        <home_city>City G</home_city>
+        <squad>Squad 20</squad>
+        <position>Goalkeeper</position>
+    </player>
+</players>
