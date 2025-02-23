@@ -14,3 +14,27 @@ class Player:
         return (f"Player(full_name='{self.full_name}', birth_date={self.birth_date}, "
                 f"team='{self.team}', home_city='{self.home_city}', "
                 f"squad='{self.squad}', position='{self.position}')")
+
+    def __eq__(self, other):
+        if isinstance(other, Player):
+            return (
+                    self.full_name == other.full_name
+                    and self.birth_date == other.birth_date
+                    and self.team == other.team
+                    and self.home_city == other.home_city
+                    and self.squad == other.squad
+                    and self.position == other.position
+            )
+        return False
+
+    def __hash__(self):
+        return hash(
+            (
+                self.full_name,
+                self.birth_date,
+                self.team,
+                self.home_city,
+                self.squad,
+                self.position,
+            )
+        )
