@@ -9,7 +9,6 @@ from src.repositories.database_repository import DatabaseRepository
 @pytest.fixture
 def temp_db():
     db = DatabaseRepository(":memory:")
-    db._initialize_db()
     return db
 
 
