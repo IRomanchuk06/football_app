@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 import pytest
@@ -281,9 +282,12 @@ def test_export_to_xml_default(controller):
     ]
     mock_repo.get_players.return_value = test_players
 
-    controller.export_to_xml("export.xml")
+    file_path = "export.xml"
+    controller.export_to_xml(file_path)
 
     mock_repo.get_players.assert_called_once()
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
 
 def test_export_to_xml_custom_players(controller):
@@ -299,9 +303,12 @@ def test_export_to_xml_custom_players(controller):
         )
     ]
 
-    controller.export_to_xml("export.xml", test_players)
+    file_path = "export.xml"
+    controller.export_to_xml(file_path, test_players)
 
     mock_repo.get_players.assert_not_called()
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
 
 def test_export_to_xml_error_handling(controller):
@@ -562,6 +569,7 @@ def test_display_players_in_tree_error(controller, qtbot):
     assert isinstance(model, QStandardItemModel)
     assert model.item(0, 0).text() == "Database error: DB error"
 
+import os
 
 def test_export_to_xml(controller):
     controller, mock_repo = controller
@@ -569,11 +577,17 @@ def test_export_to_xml(controller):
     XMLHandler = MagicMock(return_value=mock_handler)
     test_players = [MagicMock(spec=Player), MagicMock(spec=Player)]
 
+    file_path = "export.xml"
+
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr("src.controllers.player_controller.XMLHandler", XMLHandler)
-        controller.export_to_xml("export.xml", test_players)
+        controller.export_to_xml(file_path, test_players)
 
-    mock_handler.export_to_xml.assert_called_once_with("export.xml", test_players)
+    mock_handler.export_to_xml.assert_called_once_with(file_path, test_players)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
 
 
 def test_get_player_by_name(controller):
