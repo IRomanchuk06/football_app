@@ -1,199 +1,216 @@
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import (
     QMainWindow,
     QWidget,
     QVBoxLayout,
-    QLineEdit,
     QPushButton,
     QMessageBox,
     QTreeView,
-    QFileDialog,
+    QFileDialog, QDialog, QHeaderView, QLabel, QHBoxLayout, QComboBox, QSpinBox,
 )
-from datetime import date
 from src.controllers.player_controller import PlayerController
 from src.exceptions.exceptions import PlayerNotFoundError
-from src.services.xml_handler import XMLHandler
+from src.views.add_player_window import AddPlayerDialog
+from src.views.delete_window import DeleteDialog
+from src.views.search_window import SearchDialog
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
-        self.setWindowTitle("Football App")
-        self.setGeometry(100, 100, 800, 600)
-
+        self.current_page = 1
+        self.page_size = 10
         self.controller = PlayerController(db_path=":memory:")
-        self.xml_handler = XMLHandler(self.controller.db_repo)
+        self.init_ui()
 
+    def init_ui(self):
+        self.setWindowTitle("Football Manager")
+        self.setGeometry(100, 100, 1200, 800)
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
+        main_layout = QVBoxLayout()
 
-        layout = QVBoxLayout()
+        control_layout = QHBoxLayout()
+        self.add_btn = QPushButton("Add")
+        self.search_btn = QPushButton("Search")
+        self.delete_btn = QPushButton("Delete")
+        control_layout.addWidget(self.add_btn)
+        control_layout.addWidget(self.search_btn)
+        control_layout.addWidget(self.delete_btn)
 
-        self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Full Name")
-        layout.addWidget(self.name_input)
+        io_layout = QHBoxLayout()
+        self.import_btn = QPushButton("Import XML")
+        self.export_btn = QPushButton("Export XML")
+        self.export_selected_btn = QPushButton("Export Selected")
+        io_layout.addWidget(self.import_btn)
+        io_layout.addWidget(self.export_btn)
+        io_layout.addWidget(self.export_selected_btn)
 
-        self.birth_date_input = QLineEdit()
-        self.birth_date_input.setPlaceholderText("Birth Date (YYYY-MM-DD)")
-        layout.addWidget(self.birth_date_input)
-
-        self.team_input = QLineEdit()
-        self.team_input.setPlaceholderText("Team")
-        layout.addWidget(self.team_input)
-
-        self.home_city_input = QLineEdit()
-        self.home_city_input.setPlaceholderText("Home City")
-        layout.addWidget(self.home_city_input)
-
-        self.squad_input = QLineEdit()
-        self.squad_input.setPlaceholderText("Squad")
-        layout.addWidget(self.squad_input)
-
-        self.position_input = QLineEdit()
-        self.position_input.setPlaceholderText("Position")
-        layout.addWidget(self.position_input)
-
-        self.add_button = QPushButton("Add Player")
-        self.add_button.clicked.connect(self.on_add_player_clicked)
-        layout.addWidget(self.add_button)
-
-        self.search_button = QPushButton("Search Players")
-        self.search_button.clicked.connect(self.on_search_players_clicked)
-        layout.addWidget(self.search_button)
-
-        self.import_db_button = QPushButton("Load DB from XML")
-        self.import_db_button.clicked.connect(self.on_import_db_clicked)
-        layout.addWidget(self.import_db_button)
-
-        self.import_players_button = QPushButton("Add Players from XML")
-        self.import_players_button.clicked.connect(self.on_import_players_clicked)
-        layout.addWidget(self.import_players_button)
-
-        self.export_db_button = QPushButton("Export DB to XML")
-        self.export_db_button.clicked.connect(self.on_export_db_clicked)
-        layout.addWidget(self.export_db_button)
-
-        self.export_selected_button = QPushButton("Export Selected Players to XML")
-        self.export_selected_button.clicked.connect(self.on_export_selected_clicked)
-        layout.addWidget(self.export_selected_button)
+        pagination_layout = QHBoxLayout()
+        self.page_spin = QSpinBox()
+        self.page_size_combo = QComboBox()
+        self.page_size_combo.addItems(["10", "25", "50"])
+        self.stats_label = QLabel()
+        pagination_layout.addWidget(QLabel("Page:"))
+        pagination_layout.addWidget(self.page_spin)
+        pagination_layout.addWidget(QLabel("Items:"))
+        pagination_layout.addWidget(self.page_size_combo)
+        pagination_layout.addWidget(self.stats_label)
 
         self.tree_view = QTreeView()
-        self.tree_view.setSelectionMode(QTreeView.MultiSelection)
-        layout.addWidget(self.tree_view)
+        self.tree_view.setSelectionMode(QTreeView.ExtendedSelection)
+        self.tree_view.header().setSectionResizeMode(QHeaderView.ResizeToContents)
 
-        central_widget.setLayout(layout)
+        main_layout.addLayout(control_layout)
+        main_layout.addLayout(io_layout)
+        main_layout.addLayout(pagination_layout)
+        main_layout.addWidget(self.tree_view)
+        central_widget.setLayout(main_layout)
 
-        self.update_player_list()
+        self.add_btn.clicked.connect(self.show_add_dialog)
+        self.search_btn.clicked.connect(self.show_search_dialog)
+        self.delete_btn.clicked.connect(self.show_delete_dialog)
+        self.import_btn.clicked.connect(self.import_xml)
+        self.export_btn.clicked.connect(self.export_xml)
+        self.export_selected_btn.clicked.connect(self.export_selected)
+        self.page_spin.valueChanged.connect(self.page_changed)
+        self.page_size_combo.currentTextChanged.connect(self.page_size_changed)
 
-    def on_add_player_clicked(self):
-        try:
-            full_name = self.name_input.text().strip()
-            birth_date_str = self.birth_date_input.text().strip()
-            team = self.team_input.text().strip()
-            home_city = self.home_city_input.text().strip()
-            squad = self.squad_input.text().strip()
-            position = self.position_input.text().strip()
+        self.update_display()
 
-            if not full_name:
-                raise ValueError("Full Name cannot be empty.")
-            if not birth_date_str:
-                raise ValueError("Birth Date cannot be empty.")
-            if not team:
-                raise ValueError("Team cannot be empty.")
-            if not home_city:
-                raise ValueError("Home City cannot be empty.")
-            if not squad:
-                raise ValueError("Squad cannot be empty.")
-            if not position:
-                raise ValueError("Position cannot be empty.")
+    def update_display(self):
+        offset = (self.current_page - 1) * self.page_size
+        players, total = self.controller.get_paginated_players(offset, self.page_size)
+        self.page_spin.setMaximum(max(1, (total + self.page_size - 1) // self.page_size))
+        self.stats_label.setText(f"Total: {total} | Page: {self.current_page}")
 
-            birth_date = date.fromisoformat(birth_date_str)
-
-            self.controller.add_player(full_name, birth_date, team, home_city, squad, position)
-
-            self.name_input.clear()
-            self.birth_date_input.clear()
-            self.team_input.clear()
-            self.home_city_input.clear()
-            self.squad_input.clear()
-            self.position_input.clear()
-
-            self.update_player_list()
-
-            QMessageBox.information(self, "Success", "Player added successfully!")
-        except ValueError as e:
-            QMessageBox.warning(self, "Error", str(e))
-        except Exception as e:
-            QMessageBox.warning(self, "Error", str(e))
-
-    def on_search_players_clicked(self):
-        try:
-            search_conditions = {
-                "full_name": self.name_input.text().strip() or None,
-                "birth_date": date.fromisoformat(self.birth_date_input.text().strip()) if self.birth_date_input.text().strip() else None,
-                "team": self.team_input.text().strip() or None,
-                "home_city": self.home_city_input.text().strip() or None,
-                "squad": self.squad_input.text().strip() or None,
-                "position": self.position_input.text().strip() or None,
-            }
-
-            players = self.controller.search_players(**search_conditions)
-
-            model = self.controller.convert_players_to_tree(players)
-            self.tree_view.setModel(model)
-
-            QMessageBox.information(self, "Search Results", f"Found {len(players)} players.")
-        except ValueError:
-            QMessageBox.warning(self, "Error", "Invalid date format. Use YYYY-MM-DD.")
-        except PlayerNotFoundError as e:
-            QMessageBox.warning(self, "Search Results", str(e))
-        except Exception as e:
-            QMessageBox.warning(self, "Error", str(e))
-
-    def on_import_db_clicked(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Load DB from XML", "", "XML Files (*.xml)")
-        if file_path:
-            self.xml_handler.import_from_xml(file_path)
-            self.update_player_list()
-            QMessageBox.information(self, "Success", "Database loaded from XML successfully!")
-
-    def on_import_players_clicked(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Add Players from XML", "", "XML Files (*.xml)")
-        if file_path:
-            self.xml_handler.import_from_xml(file_path)
-            self.update_player_list()
-            QMessageBox.information(self, "Success", "Players added from XML successfully!")
-
-    def on_export_db_clicked(self):
-        file_path, _ = QFileDialog.getSaveFileName(self, "Export DB to XML", "", "XML Files (*.xml)")
-        if file_path:
-            self.xml_handler.export_to_xml(file_path)
-            QMessageBox.information(self, "Success", f"Database exported to XML: {file_path}")
-
-    def on_export_selected_clicked(self):
-        selected_indexes = self.tree_view.selectedIndexes()
-        if not selected_indexes:
-            QMessageBox.warning(self, "Error", "No players selected.")
-            return
-
-        selected_players = []
-        for index in selected_indexes:
-            if index.column() == 0:
-                player_name = index.data()
-                player = next((p for p in self.controller.get_all_players() if p.full_name == player_name), None)
-                if player:
-                    selected_players.append(player)
-
-        if not selected_players:
-            QMessageBox.warning(self, "Error", "No valid players selected.")
-            return
-
-        file_path, _ = QFileDialog.getSaveFileName(self, "Export Selected Players to XML", "", "XML Files (*.xml)")
-        if file_path:
-            self.xml_handler.export_to_xml(file_path, selected_players)
-            QMessageBox.information(self, "Success", f"Selected players exported to XML: {file_path}")
-
-    def update_player_list(self):
-        players = self.controller.get_all_players()
-        model = self.controller.convert_players_to_tree(players)
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(["Player", "Details"])
+        for p in players:
+            parent = QStandardItem(p.full_name)
+            parent.appendRow([QStandardItem("Birth Date"), QStandardItem(p.birth_date.isoformat())])
+            parent.appendRow([QStandardItem("Team"), QStandardItem(p.team)])
+            parent.appendRow([QStandardItem("Home City"), QStandardItem(p.home_city)])
+            parent.appendRow([QStandardItem("Squad"), QStandardItem(p.squad)])
+            parent.appendRow([QStandardItem("Position"), QStandardItem(p.position)])
+            model.appendRow(parent)
         self.tree_view.setModel(model)
+        self.tree_view.expandAll()
+
+    def show_add_dialog(self):
+        dialog = AddPlayerDialog(self)
+        if dialog.exec_() == QDialog.Accepted:
+            try:
+                self.controller.add_player(
+                    dialog.name_edit.text(),
+                    dialog.birth_date_edit.date().toPyDate(),
+                    dialog.team_edit.text(),
+                    dialog.home_city_edit.text(),
+                    dialog.squad_edit.text(),
+                    dialog.position_edit.text()
+                )
+                self.update_display()
+                QMessageBox.information(self, "Success", "Player added")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", str(e))
+
+    def show_search_dialog(self):
+        dialog = SearchDialog(self)
+        if dialog.exec_() == QDialog.Accepted:
+            try:
+                search_params = dialog.get_search_params()
+                results = self.controller.search_players(**search_params)
+                self.show_results(results)
+            except PlayerNotFoundError as e:
+                QMessageBox.information(self, "No results", str(e))
+            except Exception as e:
+                QMessageBox.critical(self, "Error", str(e))
+
+    def show_delete_dialog(self):
+        dialog = DeleteDialog(self)
+        if dialog.exec_() == QDialog.Accepted:
+            try:
+                count = self.controller.delete_players(dialog.condition_edit.text())
+                self.update_display()
+                QMessageBox.information(self, "Deleted", f"Removed {count} players")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", str(e))
+
+    def import_xml(self):
+        path, _ = QFileDialog.getOpenFileName(self, "Import XML", "", "XML Files (*.xml)")
+        if path:
+            try:
+                self.controller.import_from_xml(path)
+                self.update_display()
+                QMessageBox.information(self, "Imported", "Data loaded successfully")
+            except Exception as e:
+                QMessageBox.critical(self, "Import Error", str(e))
+
+    def export_xml(self):
+        path, _ = QFileDialog.getSaveFileName(self, "Export XML", "", "XML Files (*.xml)")
+        if path:
+            try:
+                self.controller.export_to_xml(path)
+                QMessageBox.information(self, "Exported", "Data saved successfully")
+            except Exception as e:
+                QMessageBox.critical(self, "Export Error", str(e))
+
+    def export_selected(self):
+        indexes = self.tree_view.selectedIndexes()
+        if not indexes:
+            QMessageBox.warning(self, "Error", "No selection")
+            return
+
+        path, _ = QFileDialog.getSaveFileName(self, "Export Selected", "", "XML Files (*.xml)")
+        if path:
+            try:
+                players = [self.controller.get_player_by_name(i.data()) for i in indexes if i.column() == 0]
+                self.controller.export_to_xml(path, players)
+                QMessageBox.information(self, "Exported", "Selection saved")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", str(e))
+
+    def page_changed(self):
+        self.current_page = self.page_spin.value()
+        self.update_display()
+
+    def page_size_changed(self):
+        self.page_size = int(self.page_size_combo.currentText())
+        self.current_page = 1
+        self.update_display()
+
+    def show_results(self, players):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Search Results")
+        dialog.setMinimumSize(600, 400)
+
+        layout = QVBoxLayout()
+        tree = QTreeView()
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(["Player", "Details"])
+
+        for player in players:
+            player_item = QStandardItem(player.full_name)
+
+            team_item = [QStandardItem("Team"), QStandardItem(player.team)]
+            birth_date_item = [QStandardItem("Birth Date"), QStandardItem(str(player.birth_date))]
+            home_city_item = [QStandardItem("Home City"), QStandardItem(player.home_city)]
+            squad_item = [QStandardItem("Squad"), QStandardItem(player.squad)]
+            position_item = [QStandardItem("Position"), QStandardItem(player.position)]
+
+            player_item.appendRow(team_item)
+            player_item.appendRow(birth_date_item)
+            player_item.appendRow(home_city_item)
+            player_item.appendRow(squad_item)
+            player_item.appendRow(position_item)
+
+            model.appendRow(player_item)
+
+        tree.setModel(model)
+        tree.expandAll()
+        tree.setHeaderHidden(False)
+        tree.setAlternatingRowColors(True)
+
+        layout.addWidget(tree)
+        dialog.setLayout(layout)
+        dialog.exec_()

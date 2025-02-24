@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from datetime import date
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QApplication, QTreeView
@@ -194,3 +194,194 @@ def test_display_deleted_count(controller):
 
     result = controller.display_deleted_count({"position": "Forward"})
     assert result == 3
+
+
+def test_get_paginated_players(controller):
+    controller, mock_repo = controller
+
+    test_players = [
+        Player(
+            full_name="Player1",
+            birth_date=date(2000, 1, 1),
+            team="Team A",
+            home_city="City A",
+            squad="Squad 1",
+            position="Forward"
+        ),
+        Player(
+            full_name="Player2",
+            birth_date=date(2001, 2, 2),
+            team="Team B",
+            home_city="City B",
+            squad="Squad 2",
+            position="Midfielder"
+        )
+    ]
+
+    mock_repo.get_paginated_players.return_value = test_players
+    mock_repo.count_players.return_value = 2
+
+    players, total = controller.get_paginated_players(10, 0)
+
+    assert len(players) == 2
+    assert total == 2
+    mock_repo.get_paginated_players.assert_called_once_with(10, 0)
+    mock_repo.count_players.assert_called_once()
+
+
+def test_import_from_xml_success(controller):
+    controller, mock_repo = controller
+    mock_signal = MagicMock()
+    controller.players_updated = mock_signal
+
+    mock_xml_handler = MagicMock()
+    mock_xml_handler.import_from_xml.side_effect = Exception("DB error")
+
+    with patch('src.controllers.player_controller.XMLHandler', return_value=mock_xml_handler):
+        with pytest.raises(RuntimeError) as exc_info:
+            controller.import_from_xml("test.xml")
+
+        assert "XML import failed" in str(exc_info.value)
+        mock_signal.emit.assert_not_called()
+
+
+def test_import_from_xml_failure(controller):
+    controller, mock_repo = controller
+    mock_signal = MagicMock()
+    controller.players_updated = mock_signal
+
+    mock_xml_handler = MagicMock()
+    mock_xml_handler.import_from_xml.side_effect = Exception("Invalid XML")
+
+    with patch('src.controllers.player_controller.XMLHandler', return_value=mock_xml_handler):
+        with pytest.raises(RuntimeError) as exc_info:
+            controller.import_from_xml("invalid.xml")
+
+        assert "XML import failed" in str(exc_info.value)
+        mock_signal.emit.assert_not_called()
+
+def test_export_to_xml_default(controller):
+    controller, mock_repo = controller
+    test_players = [
+        Player(
+            full_name="Test",
+            birth_date=date.today(),
+            team="Team A",
+            home_city="City A",
+            squad="Squad 1",
+            position="Forward"
+        )
+    ]
+    mock_repo.get_players.return_value = test_players
+
+    controller.export_to_xml("export.xml")
+
+    mock_repo.get_players.assert_called_once()
+
+
+def test_export_to_xml_custom_players(controller):
+    controller, mock_repo = controller
+    test_players = [
+        Player(
+            full_name="Test",
+            birth_date=date.today(),
+            team="Team A",
+            home_city="City A",
+            squad="Squad 1",
+            position="Forward"
+        )
+    ]
+
+    controller.export_to_xml("export.xml", test_players)
+
+    mock_repo.get_players.assert_not_called()
+
+
+def test_get_player_by_name_found(controller):
+    controller, mock_repo = controller
+    test_player = Player(
+        full_name="John Doe",
+        birth_date=date(1990, 1, 1),
+        team="Team A",
+        home_city="City A",
+        squad="Squad 1",
+        position="Forward"
+    )
+    mock_repo.find_players.return_value = [test_player]
+
+    result = controller.get_player_by_name("John Doe")
+
+    assert result == test_player
+
+
+def test_update_player_success(controller):
+    controller, mock_repo = controller
+    mock_signal = MagicMock()
+    controller.players_updated = mock_signal
+
+    original = Player(
+        full_name="Old",
+        birth_date=date(2000, 1, 1),
+        team="Team A",
+        home_city="City A",
+        squad="Squad 1",
+        position="Forward"
+    )
+    new_data = {"full_name": "New"}
+
+    controller.update_player(original, new_data)
+
+    mock_repo.update_player.assert_called_once_with(original, new_data)
+    mock_signal.emit.assert_called_once()
+
+
+def test_clear_database(controller):
+    controller, mock_repo = controller
+    mock_signal = MagicMock()
+    controller.players_updated = mock_signal
+
+    controller.clear_database()
+
+    mock_repo.delete_all_players.assert_called_once()
+    mock_signal.emit.assert_called_once()
+
+
+def test_add_player_success(controller):
+    controller_obj, mock_repo = controller
+    test_data = {
+        "full_name": "Lionel Messi",
+        "birth_date": date(1987, 6, 24),
+        "team": "PSG",
+        "home_city": "Rosario",
+        "squad": "First Team",
+        "position": "Forward"
+    }
+
+    mock_signal = MagicMock()
+    controller_obj.player_added = mock_signal
+
+    controller_obj.add_player(**test_data)
+
+    mock_repo.add_player.assert_called_once()
+    added_player = mock_repo.add_player.call_args[0][0]
+    assert isinstance(added_player, Player)
+    assert added_player.full_name == test_data["full_name"]
+    assert added_player.birth_date == test_data["birth_date"]
+    mock_signal.emit.assert_called_once_with(added_player)
+
+
+def test_add_player_with_invalid_data(controller):
+    controller_obj, mock_repo = controller
+    invalid_data = {
+        "full_name": "",
+        "birth_date": date(2025, 1, 1),
+        "team": "",
+        "home_city": "",
+        "squad": "",
+        "position": ""
+    }
+
+    with pytest.raises(ValueError):
+        controller_obj.add_player(**invalid_data)
+
+    mock_repo.add_player.assert_not_called()
