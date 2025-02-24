@@ -1,3 +1,5 @@
+import sqlite3
+
 import pytest
 from unittest.mock import MagicMock, patch
 from datetime import date
@@ -6,7 +8,7 @@ from PyQt5.QtWidgets import QApplication, QTreeView
 from src.controllers.player_controller import PlayerController
 from src.models.player import Player
 from src.exceptions.exceptions import PlayerNotFoundError, DeletionFailedError
-
+import xml.etree.ElementTree as ET
 
 @pytest.fixture(scope="module")
 def qapp():
@@ -235,15 +237,14 @@ def test_import_from_xml_success(controller):
     controller.players_updated = mock_signal
 
     mock_xml_handler = MagicMock()
-    mock_xml_handler.import_from_xml.side_effect = Exception("DB error")
+    mock_xml_handler.import_from_xml.side_effect = ET.ParseError("XML parsing error")
 
     with patch('src.controllers.player_controller.XMLHandler', return_value=mock_xml_handler):
         with pytest.raises(RuntimeError) as exc_info:
             controller.import_from_xml("test.xml")
 
-        assert "XML import failed" in str(exc_info.value)
+        assert "XML error" in str(exc_info.value)
         mock_signal.emit.assert_not_called()
-
 
 def test_import_from_xml_failure(controller):
     controller, mock_repo = controller
@@ -251,13 +252,13 @@ def test_import_from_xml_failure(controller):
     controller.players_updated = mock_signal
 
     mock_xml_handler = MagicMock()
-    mock_xml_handler.import_from_xml.side_effect = Exception("Invalid XML")
+    mock_xml_handler.import_from_xml.side_effect = FileNotFoundError("File not found")
 
     with patch('src.controllers.player_controller.XMLHandler', return_value=mock_xml_handler):
         with pytest.raises(RuntimeError) as exc_info:
             controller.import_from_xml("invalid.xml")
 
-        assert "XML import failed" in str(exc_info.value)
+        assert "File not found" in str(exc_info.value)
         mock_signal.emit.assert_not_called()
 
 def test_export_to_xml_default(controller):
@@ -385,3 +386,106 @@ def test_add_player_with_invalid_data(controller):
         controller_obj.add_player(**invalid_data)
 
     mock_repo.add_player.assert_not_called()
+
+
+def test_add_player_future_birth_date(controller):
+    controller_obj, mock_repo = controller
+    future_date = date.today().replace(year=date.today().year + 1)
+    test_data = {
+        "full_name": "Test",
+        "birth_date": future_date,
+        "team": "Team",
+        "home_city": "City",
+        "squad": "Squad",
+        "position": "Position"
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        controller_obj.add_player(**test_data)
+
+    assert "Birth date cannot be in the future" in str(exc_info.value)
+    mock_repo.add_player.assert_not_called()
+
+
+def test_add_player_database_error(controller):
+    controller_obj, mock_repo = controller
+    test_data = {
+        "full_name": "Test",
+        "birth_date": date(2000, 1, 1),
+        "team": "Team",
+        "home_city": "City",
+        "squad": "Squad",
+        "position": "Position"
+    }
+    mock_repo.add_player.side_effect = sqlite3.Error("DB error")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.add_player(**test_data)
+
+    assert "Database error" in str(exc_info.value)
+
+
+def test_get_all_players_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.get_players.side_effect = sqlite3.Error("DB error")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.get_all_players()
+
+    assert "Database error" in str(exc_info.value)
+
+
+def test_display_all_players_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.get_players.side_effect = RuntimeError("Test error")
+
+    result = controller_obj.display_all_players()
+
+    assert result == ["Test error"]
+
+
+def test_display_search_results_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.find_players.side_effect = RuntimeError("Test error")
+
+    result = controller_obj.display_search_results({"full_name": "Test"})
+
+    assert result == ["Test error"]
+
+
+def test_display_search_results_player_not_found(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.find_players.side_effect = PlayerNotFoundError("No players found")
+
+    result = controller_obj.display_search_results({"full_name": "Unknown"})
+
+    assert result == ["No players found"]
+
+
+def test_display_deleted_count_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.delete_players.side_effect = RuntimeError("Test error")
+
+    result = controller_obj.display_deleted_count({"position": "Forward"})
+
+    assert result == 0
+
+
+def test_display_deleted_count_deletion_failed(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.delete_players.side_effect = DeletionFailedError("No players deleted")
+
+    result = controller_obj.display_deleted_count({"position": "Goalkeeper"})
+
+    assert result == 0
+
+
+def test_search_players_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.find_players.side_effect = sqlite3.Error("DB error")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.search_players(full_name="Test")
+
+    assert "Database error" in str(exc_info.value)
+    mock_repo.find_players.assert_called_once()
