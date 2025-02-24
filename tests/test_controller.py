@@ -5,6 +5,8 @@ from unittest.mock import MagicMock, patch
 from datetime import date
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QApplication, QTreeView
+from pytestqt import qtbot
+
 from src.controllers.player_controller import PlayerController
 from src.models.player import Player
 from src.exceptions.exceptions import PlayerNotFoundError, DeletionFailedError
@@ -231,20 +233,15 @@ def test_get_paginated_players(controller):
     mock_repo.count_players.assert_called_once()
 
 
-def test_import_from_xml_success(controller):
-    controller, mock_repo = controller
-    mock_signal = MagicMock()
-    controller.players_updated = mock_signal
+def test_import_from_xml_success(controller, qtbot):
+    controller_obj, mock_repo = controller
+    mock_handler = MagicMock()
 
-    mock_xml_handler = MagicMock()
-    mock_xml_handler.import_from_xml.side_effect = ET.ParseError("XML parsing error")
+    with patch('src.controllers.player_controller.XMLHandler', return_value=mock_handler):
+        with qtbot.wait_signal(controller_obj.players_updated, timeout=1000):
+            controller_obj.import_from_xml("test.xml")
 
-    with patch('src.controllers.player_controller.XMLHandler', return_value=mock_xml_handler):
-        with pytest.raises(RuntimeError) as exc_info:
-            controller.import_from_xml("test.xml")
-
-        assert "XML error" in str(exc_info.value)
-        mock_signal.emit.assert_not_called()
+    mock_handler.import_from_xml.assert_called_once_with("test.xml")
 
 def test_import_from_xml_failure(controller):
     controller, mock_repo = controller
@@ -259,6 +256,15 @@ def test_import_from_xml_failure(controller):
             controller.import_from_xml("invalid.xml")
 
         assert "File not found" in str(exc_info.value)
+        mock_signal.emit.assert_not_called()
+
+    mock_xml_handler.import_from_xml.side_effect = RuntimeError("Import failed")
+
+    with patch('src.controllers.player_controller.XMLHandler', return_value=mock_xml_handler):
+        with pytest.raises(RuntimeError) as exc_info:
+            controller.import_from_xml("invalid.xml")
+
+        assert "Import failed" in str(exc_info.value)
         mock_signal.emit.assert_not_called()
 
 def test_export_to_xml_default(controller):
@@ -297,6 +303,26 @@ def test_export_to_xml_custom_players(controller):
 
     mock_repo.get_players.assert_not_called()
 
+
+def test_export_to_xml_error_handling(controller):
+    controller_obj, mock_repo = controller
+    mock_handler = MagicMock()
+
+    mock_handler.export_to_xml.side_effect = IOError("File not found")
+
+    with patch('src.controllers.player_controller.XMLHandler', return_value=mock_handler):
+        with pytest.raises(RuntimeError) as exc_info:
+            controller_obj.export_to_xml("invalid_path.xml")
+
+    assert "Export failed: File not found" in str(exc_info.value)
+
+    mock_handler.export_to_xml.side_effect = ET.ParseError("XML parsing error")
+
+    with patch('src.controllers.player_controller.XMLHandler', return_value=mock_handler):
+        with pytest.raises(RuntimeError) as exc_info:
+            controller_obj.export_to_xml("invalid_xml.xml")
+
+    assert "Export failed: XML parsing error" in str(exc_info.value)
 
 def test_get_player_by_name_found(controller):
     controller, mock_repo = controller
@@ -489,3 +515,120 @@ def test_search_players_database_error(controller):
 
     assert "Database error" in str(exc_info.value)
     mock_repo.find_players.assert_called_once()
+
+
+def test_format_player_for_display(controller):
+    controller, mock_repo = controller
+    player = Player(
+        full_name="John Doe",
+        birth_date=date(1990, 5, 15),
+        team="Team A",
+        home_city="City X",
+        squad="Squad 1",
+        position="Forward"
+    )
+    result = controller.format_player_for_display(player)
+    assert result == "John Doe | 1990-05-15 | Team A | City X | Squad 1 | Forward"
+
+
+def test_display_deleted_count_success(controller):
+    controller, mock_repo = controller
+    mock_repo.delete_players.return_value = 3
+    result = controller.display_deleted_count({"full_name": "John"})
+    assert result == 3
+    mock_repo.delete_players.assert_called_once_with(full_name="John", birth_date=None,
+                                                     team=None, home_city=None,
+                                                     squad=None, position=None)
+
+
+def test_display_deleted_count_failure(controller):
+    controller, mock_repo = controller
+    mock_repo.delete_players.side_effect = DeletionFailedError("Test error")
+    result = controller.display_deleted_count({})
+    assert result == 0
+
+
+def test_display_players_in_tree_error(controller, qtbot):
+    controller, mock_repo = controller
+    mock_repo.get_players.side_effect = sqlite3.Error("DB error")
+
+    from PyQt5.QtWidgets import QTreeView
+    tree_view = QTreeView()
+    qtbot.addWidget(tree_view)
+
+    controller.display_players_in_tree(tree_view)
+
+    model = tree_view.model()
+    assert isinstance(model, QStandardItemModel)
+    assert model.item(0, 0).text() == "Database error: DB error"
+
+
+def test_export_to_xml(controller):
+    controller, mock_repo = controller
+    mock_handler = MagicMock()
+    XMLHandler = MagicMock(return_value=mock_handler)
+    test_players = [MagicMock(spec=Player), MagicMock(spec=Player)]
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr("src.controllers.player_controller.XMLHandler", XMLHandler)
+        controller.export_to_xml("export.xml", test_players)
+
+    mock_handler.export_to_xml.assert_called_once_with("export.xml", test_players)
+
+
+def test_get_player_by_name(controller):
+    controller, mock_repo = controller
+    mock_player = MagicMock(spec=Player)
+    mock_repo.find_players.return_value = [mock_player]
+
+    result = controller.get_player_by_name("John Doe")
+
+    assert result == mock_player
+    mock_repo.find_players.assert_called_once_with(full_name="John Doe")
+
+
+def test_count_players(controller):
+    controller, mock_repo = controller
+    mock_repo.count_players.return_value = 42
+    assert controller.count_players() == 42
+
+
+def test_update_player(controller, qtbot):
+    controller, mock_repo = controller
+    original = MagicMock(spec=Player)
+    new_data = {"team": "New Team"}
+
+    with qtbot.wait_signal(controller.players_updated, timeout=1000):
+        controller.update_player(original, new_data)
+
+    mock_repo.update_player.assert_called_once_with(original, new_data)
+
+
+def test_delete_players_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.delete_players.side_effect = sqlite3.Error("Database connection failed")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.delete_players(full_name="John Doe")
+
+    assert "Database error: Database connection failed" in str(exc_info.value)
+    mock_repo.delete_players.assert_called_once_with(
+        full_name="John Doe",
+        birth_date=None,
+        team=None,
+        home_city=None,
+        squad=None,
+        position=None
+    )
+
+
+def test_get_paginated_players_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.get_paginated_players.side_effect = sqlite3.Error("Database connection failed")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.get_paginated_players(offset=0, limit=10)
+
+    assert "Database error: Database connection failed" in str(exc_info.value)
+    mock_repo.get_paginated_players.assert_called_once_with(0, 10)
+    mock_repo.count_players.assert_not_called()
