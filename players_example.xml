@@ -1,163 +1,372 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <players>
+    <!-- Forwards -->
     <player>
-        <full_name>John Doe</full_name>
-        <birth_date>1990-05-25</birth_date>
-        <team>Team A</team>
-        <home_city>City X</home_city>
-        <squad>Squad 1</squad>
+        <full_name>Lionel Messi</full_name>
+        <birth_date>1987-06-24</birth_date>
+        <team>Inter Miami</team>
+        <home_city>Rosario</home_city>
+        <squad>First Team</squad>
         <position>Forward</position>
     </player>
     <player>
-        <full_name>Jane Smith</full_name>
-        <birth_date>1992-07-12</birth_date>
-        <team>Team B</team>
-        <home_city>City Y</home_city>
-        <squad>Squad 2</squad>
+        <full_name>Cristiano Ronaldo</full_name>
+        <birth_date>1985-02-05</birth_date>
+        <team>Al Nassr</team>
+        <home_city>Funchal</home_city>
+        <squad>Main Squad</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Kylian Mbappé</full_name>
+        <birth_date>1998-12-20</birth_date>
+        <team>Paris Saint-Germain</team>
+        <home_city>Paris</home_city>
+        <squad>Starting XI</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Erling Haaland</full_name>
+        <birth_date>2000-07-21</birth_date>
+        <team>Manchester City</team>
+        <home_city>Leeds</home_city>
+        <squad>Strikers</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Robert Lewandowski</full_name>
+        <birth_date>1988-08-21</birth_date>
+        <team>Barcelona</team>
+        <home_city>Warsaw</home_city>
+        <squad>Attack</squad>
+        <position>Forward</position>
+    </player>
+
+    <!-- Midfielders -->
+    <player>
+        <full_name>Kevin De Bruyne</full_name>
+        <birth_date>1991-06-28</birth_date>
+        <team>Manchester City</team>
+        <home_city>Drongen</home_city>
+        <squad>Midfield Core</squad>
         <position>Midfielder</position>
     </player>
     <player>
-        <full_name>Michael Johnson</full_name>
-        <birth_date>1988-03-15</birth_date>
-        <team>Team C</team>
-        <home_city>City Z</home_city>
-        <squad>Squad 3</squad>
+        <full_name>Luka Modrić</full_name>
+        <birth_date>1985-09-09</birth_date>
+        <team>Real Madrid</team>
+        <home_city>Zadar</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Jude Bellingham</full_name>
+        <birth_date>2003-06-29</birth_date>
+        <team>Real Madrid</team>
+        <home_city>Stourbridge</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Federico Valverde</full_name>
+        <birth_date>1998-07-22</birth_date>
+        <team>Real Madrid</team>
+        <home_city>Montevideo</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Bernardo Silva</full_name>
+        <birth_date>1994-08-10</birth_date>
+        <team>Manchester City</team>
+        <home_city>Lisbon</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+
+    <!-- Defenders -->
+    <player>
+        <full_name>Virgil van Dijk</full_name>
+        <birth_date>1991-07-08</birth_date>
+        <team>Liverpool</team>
+        <home_city>Breda</home_city>
+        <squad>Defensive Line</squad>
         <position>Defender</position>
     </player>
     <player>
-        <full_name>Emily Davis</full_name>
-        <birth_date>1995-11-30</birth_date>
-        <team>Team D</team>
-        <home_city>City W</home_city>
-        <squad>Squad 4</squad>
+        <full_name>Rúben Dias</full_name>
+        <birth_date>1997-05-14</birth_date>
+        <team>Manchester City</team>
+        <home_city>Amadora</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Trent Alexander-Arnold</full_name>
+        <birth_date>1998-10-07</birth_date>
+        <team>Liverpool</team>
+        <home_city>Liverpool</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Alphonso Davies</full_name>
+        <birth_date>2000-11-02</birth_date>
+        <team>Bayern Munich</team>
+        <home_city>Buduburam</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Achraf Hakimi</full_name>
+        <birth_date>1998-11-04</birth_date>
+        <team>Paris Saint-Germain</team>
+        <home_city>Madrid</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+
+    <!-- Goalkeepers -->
+    <player>
+        <full_name>Thibaut Courtois</full_name>
+        <birth_date>1992-05-11</birth_date>
+        <team>Real Madrid</team>
+        <home_city>Bree</home_city>
+        <squad>Goalkeepers</squad>
         <position>Goalkeeper</position>
     </player>
     <player>
-        <full_name>David Brown</full_name>
-        <birth_date>1991-09-20</birth_date>
-        <team>Team E</team>
-        <home_city>City V</home_city>
-        <squad>Squad 5</squad>
-        <position>Forward</position>
-    </player>
-    <player>
-        <full_name>Sarah Wilson</full_name>
-        <birth_date>1993-04-10</birth_date>
-        <team>Team F</team>
-        <home_city>City U</home_city>
-        <squad>Squad 6</squad>
-        <position>Midfielder</position>
-    </player>
-    <player>
-        <full_name>James Miller</full_name>
-        <birth_date>1989-12-05</birth_date>
-        <team>Team G</team>
-        <home_city>City T</home_city>
-        <squad>Squad 7</squad>
-        <position>Defender</position>
-    </player>
-    <player>
-        <full_name>Olivia Taylor</full_name>
-        <birth_date>1994-08-18</birth_date>
-        <team>Team H</team>
-        <home_city>City S</home_city>
-        <squad>Squad 8</squad>
+        <full_name>Ederson</full_name>
+        <birth_date>1993-08-17</birth_date>
+        <team>Manchester City</team>
+        <home_city>Osasco</home_city>
+        <squad>Goalkeepers</squad>
         <position>Goalkeeper</position>
     </player>
     <player>
-        <full_name>Daniel Anderson</full_name>
-        <birth_date>1990-02-22</birth_date>
-        <team>Team I</team>
-        <home_city>City R</home_city>
-        <squad>Squad 9</squad>
-        <position>Forward</position>
-    </player>
-    <player>
-        <full_name>Sophia Thomas</full_name>
-        <birth_date>1996-06-14</birth_date>
-        <team>Team J</team>
-        <home_city>City Q</home_city>
-        <squad>Squad 10</squad>
-        <position>Midfielder</position>
-    </player>
-    <player>
-        <full_name>Matthew Jackson</full_name>
-        <birth_date>1987-10-08</birth_date>
-        <team>Team K</team>
-        <home_city>City P</home_city>
-        <squad>Squad 11</squad>
-        <position>Defender</position>
-    </player>
-    <player>
-        <full_name>Emma White</full_name>
-        <birth_date>1997-01-25</birth_date>
-        <team>Team L</team>
-        <home_city>City O</home_city>
-        <squad>Squad 12</squad>
+        <full_name>Marc-André ter Stegen</full_name>
+        <birth_date>1992-04-30</birth_date>
+        <team>Barcelona</team>
+        <home_city>Mönchengladbach</home_city>
+        <squad>Goalkeepers</squad>
         <position>Goalkeeper</position>
     </player>
     <player>
-        <full_name>Christopher Harris</full_name>
-        <birth_date>1992-03-30</birth_date>
-        <team>Team M</team>
-        <home_city>City N</home_city>
-        <squad>Squad 13</squad>
-        <position>Forward</position>
-    </player>
-    <player>
-        <full_name>Ava Martin</full_name>
-        <birth_date>1993-07-17</birth_date>
-        <team>Team N</team>
-        <home_city>City M</home_city>
-        <squad>Squad 14</squad>
-        <position>Midfielder</position>
-    </player>
-    <player>
-        <full_name>Andrew Thompson</full_name>
-        <birth_date>1988-05-12</birth_date>
-        <team>Team O</team>
-        <home_city>City L</home_city>
-        <squad>Squad 15</squad>
-        <position>Defender</position>
-    </player>
-    <player>
-        <full_name>Isabella Garcia</full_name>
-        <birth_date>1995-09-28</birth_date>
-        <team>Team P</team>
-        <home_city>City K</home_city>
-        <squad>Squad 16</squad>
+        <full_name>Gianluigi Donnarumma</full_name>
+        <birth_date>1999-02-25</birth_date>
+        <team>Paris Saint-Germain</team>
+        <home_city>Naples</home_city>
+        <squad>Goalkeepers</squad>
         <position>Goalkeeper</position>
     </player>
     <player>
-        <full_name>William Martinez</full_name>
-        <birth_date>1991-04-03</birth_date>
-        <team>Team Q</team>
-        <home_city>City J</home_city>
-        <squad>Squad 17</squad>
+        <full_name>Manuel Neuer</full_name>
+        <birth_date>1986-03-27</birth_date>
+        <team>Bayern Munich</team>
+        <home_city>Gelsenkirchen</home_city>
+        <squad>Goalkeepers</squad>
+        <position>Goalkeeper</position>
+    </player>
+
+    <!-- 25 More Players (Examples) -->
+    <player>
+        <full_name>Mohamed Salah</full_name>
+        <birth_date>1992-06-15</birth_date>
+        <team>Liverpool</team>
+        <home_city>Nagrig</home_city>
+        <squad>Attack</squad>
         <position>Forward</position>
     </player>
     <player>
-        <full_name>Mia Robinson</full_name>
-        <birth_date>1994-12-19</birth_date>
-        <team>Team R</team>
-        <home_city>City I</home_city>
-        <squad>Squad 18</squad>
+        <full_name>Harry Kane</full_name>
+        <birth_date>1993-07-28</birth_date>
+        <team>Bayern Munich</team>
+        <home_city>London</home_city>
+        <squad>Attack</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Vinicius Junior</full_name>
+        <birth_date>2000-07-12</birth_date>
+        <team>Real Madrid</team>
+        <home_city>São Gonçalo</home_city>
+        <squad>Attack</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Phil Foden</full_name>
+        <birth_date>2000-05-28</birth_date>
+        <team>Manchester City</team>
+        <home_city>Stockport</home_city>
+        <squad>Midfield</squad>
         <position>Midfielder</position>
     </player>
     <player>
-        <full_name>Joseph Clark</full_name>
-        <birth_date>1989-08-07</birth_date>
-        <team>Team S</team>
-        <home_city>City H</home_city>
-        <squad>Squad 19</squad>
+        <full_name>Rodri</full_name>
+        <birth_date>1996-06-22</birth_date>
+        <team>Manchester City</team>
+        <home_city>Madrid</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Bruno Fernandes</full_name>
+        <birth_date>1994-09-08</birth_date>
+        <team>Manchester United</team>
+        <home_city>Maia</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Joshua Kimmich</full_name>
+        <birth_date>1995-02-08</birth_date>
+        <team>Bayern Munich</team>
+        <home_city>Rottweil</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Martin Ødegaard</full_name>
+        <birth_date>1998-12-17</birth_date>
+        <team>Arsenal</team>
+        <home_city>Drammen</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Declan Rice</full_name>
+        <birth_date>1999-01-14</birth_date>
+        <team>Arsenal</team>
+        <home_city>London</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>N'Golo Kanté</full_name>
+        <birth_date>1991-03-29</birth_date>
+        <team>Al-Ittihad</team>
+        <home_city>Paris</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Rafael Leão</full_name>
+        <birth_date>1999-06-10</birth_date>
+        <team>AC Milan</team>
+        <home_city>Lisbon</home_city>
+        <squad>Attack</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Antoine Griezmann</full_name>
+        <birth_date>1991-03-21</birth_date>
+        <team>Atletico Madrid</team>
+        <home_city>Mâcon</home_city>
+        <squad>Attack</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Ousmane Dembélé</full_name>
+        <birth_date>1997-05-15</birth_date>
+        <team>Paris Saint-Germain</team>
+        <home_city>Vernon</home_city>
+        <squad>Attack</squad>
+        <position>Forward</position>
+    </player>
+    <player>
+        <full_name>Jamal Musiala</full_name>
+        <birth_date>2003-02-26</birth_date>
+        <team>Bayern Munich</team>
+        <home_city>Stuttgart</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Pedri</full_name>
+        <birth_date>2002-11-25</birth_date>
+        <team>Barcelona</team>
+        <home_city>Tegueste</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Gavi</full_name>
+        <birth_date>2004-08-05</birth_date>
+        <team>Barcelona</team>
+        <home_city>Los Palacios</home_city>
+        <squad>Midfield</squad>
+        <position>Midfielder</position>
+    </player>
+    <player>
+        <full_name>Ronald Araújo</full_name>
+        <birth_date>1999-03-07</birth_date>
+        <team>Barcelona</team>
+        <home_city>Rivera</home_city>
+        <squad>Defense</squad>
         <position>Defender</position>
     </player>
     <player>
-        <full_name>Charlotte Rodriguez</full_name>
-        <birth_date>1996-02-14</birth_date>
-        <team>Team T</team>
-        <home_city>City G</home_city>
-        <squad>Squad 20</squad>
+        <full_name>David Alaba</full_name>
+        <birth_date>1992-06-24</birth_date>
+        <team>Real Madrid</team>
+        <home_city>Vienna</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Theo Hernández</full_name>
+        <birth_date>1997-10-06</birth_date>
+        <team>AC Milan</team>
+        <home_city>Marseille</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>João Cancelo</full_name>
+        <birth_date>1994-05-27</birth_date>
+        <team>Barcelona</team>
+        <home_city>Barreiro</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Kyle Walker</full_name>
+        <birth_date>1990-05-28</birth_date>
+        <team>Manchester City</team>
+        <home_city>Sheffield</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Antonio Rüdiger</full_name>
+        <birth_date>1993-03-03</birth_date>
+        <team>Real Madrid</team>
+        <home_city>Berlin</home_city>
+        <squad>Defense</squad>
+        <position>Defender</position>
+    </player>
+    <player>
+        <full_name>Mike Maignan</full_name>
+        <birth_date>1995-07-03</birth_date>
+        <team>AC Milan</team>
+        <home_city>Cayenne</home_city>
+        <squad>Goalkeepers</squad>
+        <position>Goalkeeper</position>
+    </player>
+    <player>
+        <full_name>André Onana</full_name>
+        <birth_date>1996-04-02</birth_date>
+        <team>Manchester United</team>
+        <home_city>Nkol Ngok</home_city>
+        <squad>Goalkeepers</squad>
+        <position>Goalkeeper</position>
+    </player>
+    <player>
+        <full_name>Jan Oblak</full_name>
+        <birth_date>1993-01-07</birth_date>
+        <team>Atletico Madrid</team>
+        <home_city>Škofja Loka</home_city>
+        <squad>Goalkeepers</squad>
         <position>Goalkeeper</position>
     </player>
 </players>
