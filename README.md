@@ -87,7 +87,7 @@ football-manager/
 │   └── app.py               # Entry point
 ├── tests/                   # Unit+integration tests
 ├── screenshots/             # Screenshots for README.md
-├── players_example.xml      # Sample data
+├── data/                    # XML players examples
 └── requirements.txt         # Dependency list
 ```
 
