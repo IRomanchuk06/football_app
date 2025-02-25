@@ -65,7 +65,7 @@ pytest tests/ -v --cov=src --cov-report=html
 2. **Search Players**  
    Combine multiple search criteria
 3. **Remove Players**
-   Deleting a player by SQL condition
+   Deleting a player by multiple criteria
 5. **Bulk Operations**  
    Delete/Export groups of players
 6. **Data Persistence**  

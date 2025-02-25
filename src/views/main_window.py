@@ -130,7 +130,8 @@ class MainWindow(QMainWindow):
         dialog = DeleteDialog(self)
         if dialog.exec_() == QDialog.Accepted:
             try:
-                count = self.controller.delete_players(dialog.condition_edit.text())
+                delete_params = dialog.get_delete_params()
+                count = self.controller.delete_players(**delete_params)
                 self.update_display()
                 QMessageBox.information(self, "Deleted", f"Removed {count} players")
             except Exception as e:
