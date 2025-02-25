@@ -3,7 +3,7 @@ from datetime import date
 from src.models.player import Player
 from src.repositories.database_repository import DatabaseRepository
 
-
+g
 class XMLHandler:
     def __init__(self, db_repository: DatabaseRepository):
         self.db_repository = db_repository
