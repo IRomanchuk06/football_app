@@ -38,6 +38,9 @@ class XMLHandler:
 
     def export_to_xml(self, xml_file_path: str, players: list[Player] = None):
         try:
+            if not xml_file_path.endswith(".xml"):
+                xml_file_path += ".xml"
+
             if players is None:
                 players = self.db_repository.get_players()
 
