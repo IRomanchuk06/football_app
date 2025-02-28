@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 ```bash
 # Run application
-python -m src/app.py
+python -m src.app
 
 # Run tests
 pytest tests/ -v --cov=src --cov-report=html
