@@ -645,3 +645,73 @@ def test_get_paginated_players_database_error(controller):
     assert "Database error: Database connection failed" in str(exc_info.value)
     mock_repo.get_paginated_players.assert_called_once_with(0, 10)
     mock_repo.count_players.assert_not_called()
+
+
+def test_get_player_by_name_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.find_players.side_effect = sqlite3.Error("DB failure")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.get_player_by_name("Test Player")
+
+    assert "Database error: DB failure" in str(exc_info.value)
+    mock_repo.find_players.assert_called_once_with(full_name="Test Player")
+
+
+def test_count_players_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.count_players.side_effect = sqlite3.Error("Count error")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.count_players()
+
+    assert "Database error: Count error" in str(exc_info.value)
+    mock_repo.count_players.assert_called_once()
+
+
+def test_update_player_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.update_player.side_effect = sqlite3.Error("Update failed")
+    test_player = Player(
+        full_name="Test",
+        birth_date=date(2000,1,1),
+        team="Team A",
+        home_city="City",
+        squad="Squad 1",
+        position="Forward"
+    )
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.update_player(test_player, {"team": "New"})
+
+    assert "Database error: Update failed" in str(exc_info.value)
+    mock_repo.update_player.assert_called_once_with(test_player, {"team": "New"})
+
+
+def test_update_player_invalid_data_error(controller):
+    controller_obj, mock_repo = controller
+    test_player = Player(
+        full_name="Test",
+        birth_date=date(2000,1,1),
+        team="Team A",
+        home_city="City",
+        squad="Squad 1",
+        position="Forward"
+    )
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.update_player(test_player, "invalid_data")
+
+    assert "No update data provided or invalid data format" in str(exc_info.value)
+    mock_repo.update_player.assert_not_called()
+
+
+def test_clear_database_error(controller):
+    controller_obj, mock_repo = controller
+    mock_repo.delete_all_players.side_effect = sqlite3.Error("Clear error")
+
+    with pytest.raises(RuntimeError) as exc_info:
+        controller_obj.clear_database()
+
+    assert "Database cleanup failed: Clear error" in str(exc_info.value)
+    mock_repo.delete_all_players.assert_called_once()

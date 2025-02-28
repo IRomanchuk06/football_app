@@ -5,3 +5,4 @@ omit =
     src/views/delete_window.py
     src/views/main_window.py
     src/views/search_window.py
+    src/views/table_window.py

@@ -173,14 +173,12 @@ class PlayerController(QObject):
 
     def update_player(self, original_player: Player, new_data: dict) -> None:
         try:
-            if not new_data:
-                raise ValueError("No update data provided")
+            if not new_data or not isinstance(new_data, dict):
+                raise RuntimeError("No update data provided or invalid data format")
             self.db_repo.update_player(original_player, new_data)
             self.players_updated.emit()
         except sqlite3.Error as e:
             raise RuntimeError(f"Database error: {str(e)}")
-        except AttributeError:
-            raise RuntimeError("Invalid player data format")
 
     def clear_database(self) -> None:
         try:
