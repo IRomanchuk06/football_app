@@ -132,11 +132,12 @@ class Player:
 
 ### Test Coverage
 ```
-Name                                      Stmts   Miss  Cover  
--------------------------------------------------------------
+---------- coverage: platform linux, python 3.12.3-final-0 -----------
+Name                                      Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------------
 src/__init__.py                               0      0   100%
 src/controllers/__init__.py                   0      0   100%
-src/controllers/player_controller.py        135     11    92% 
+src/controllers/player_controller.py        133      0   100%
 src/exceptions/__init__.py                    0      0   100%
 src/exceptions/exceptions.py                  4      0   100%
 src/models/__init__.py                        0      0   100%
@@ -144,8 +145,8 @@ src/models/player.py                         17      0   100%
 src/repositories/__init__.py                  0      0   100%
 src/repositories/database_repository.py     122      0   100%
 src/services/__init__.py                      0      0   100%
-src/services/xml_handler.py                  43      0   100%
+src/services/xml_handler.py                  45      0   100%
 src/views/__init__.py                         0      0   100%
---------------------------------------------------------------
-TOTAL                                       321     11    97%
+-----------------------------------------------------------------------
+TOTAL                                       321      0   100%
 ```
