@@ -13,6 +13,7 @@ from src.exceptions.exceptions import PlayerNotFoundError
 from src.views.add_player_window import AddPlayerDialog
 from src.views.delete_window import DeleteDialog
 from src.views.search_window import SearchDialog
+from src.views.table_window import TableDialog
 
 
 class MainWindow(QMainWindow):
@@ -34,9 +35,11 @@ class MainWindow(QMainWindow):
         self.add_btn = QPushButton("Add")
         self.search_btn = QPushButton("Search")
         self.delete_btn = QPushButton("Delete")
+        self.table_view_btn = QPushButton("Table View")
         control_layout.addWidget(self.add_btn)
         control_layout.addWidget(self.search_btn)
         control_layout.addWidget(self.delete_btn)
+        control_layout.addWidget(self.table_view_btn)
 
         io_layout = QHBoxLayout()
         self.import_btn = QPushButton("Import XML")
@@ -48,6 +51,7 @@ class MainWindow(QMainWindow):
 
         pagination_layout = QHBoxLayout()
         self.page_spin = QSpinBox()
+        self.page_spin.setMinimum(1)
         self.page_size_combo = QComboBox()
         self.page_size_combo.addItems(["10", "25", "50"])
         self.stats_label = QLabel()
@@ -70,6 +74,7 @@ class MainWindow(QMainWindow):
         self.add_btn.clicked.connect(self.show_add_dialog)
         self.search_btn.clicked.connect(self.show_search_dialog)
         self.delete_btn.clicked.connect(self.show_delete_dialog)
+        self.table_view_btn.clicked.connect(self.show_table_view)
         self.import_btn.clicked.connect(self.import_xml)
         self.export_btn.clicked.connect(self.export_xml)
         self.export_selected_btn.clicked.connect(self.export_selected)
@@ -81,8 +86,26 @@ class MainWindow(QMainWindow):
     def update_display(self):
         offset = (self.current_page - 1) * self.page_size
         players, total = self.controller.get_paginated_players(offset, self.page_size)
-        self.page_spin.setMaximum(max(1, (total + self.page_size - 1) // self.page_size))
-        self.stats_label.setText(f"Total: {total} | Page: {self.current_page}")
+
+        current_count = len(players)
+        total_pages = max(1, (total + self.page_size - 1) // self.page_size) if total > 0 else 0
+
+        if total_pages == 0:
+            self.current_page = 0
+            self.page_spin.setRange(0, 0)
+            page_info = "0/0"
+            items_info = "0/0"
+        else:
+            if self.current_page > total_pages:
+                self.current_page = total_pages
+            self.page_spin.setRange(1, total_pages)
+            page_info = f"{self.current_page}/{total_pages}"
+            items_info = f"{current_count}/{total}" if total > 0 else "0/0"
+
+        self.page_spin.setValue(self.current_page if total_pages > 0 else 0)
+        self.stats_label.setText(
+            f"Total: {total} | Page: {page_info} | Items: {items_info}"
+        )
 
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels(["Player", "Details"])
@@ -214,4 +237,10 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(tree)
         dialog.setLayout(layout)
+        dialog.exec_()
+
+    def show_table_view(self):
+        offset = (self.current_page - 1) * self.page_size
+        players, _ = self.controller.get_paginated_players(offset, self.page_size)
+        dialog = TableDialog(players, self)
         dialog.exec_()

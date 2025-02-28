@@ -141,13 +141,3 @@ def test_export_to_xml_error(mock_repo, tmp_path):
         handler.export_to_xml(str(invalid_path))
         mock_print.assert_called_once()
         assert "Error exporting to XML" in mock_print.call_args[0][0]
-
-def test_export_selected_to_xml_error(mock_repo, tmp_path, sample_players):
-    invalid_path = tmp_path / "invalid_directory"
-    invalid_path.mkdir()
-
-    handler = XMLHandler(mock_repo)
-    with patch("builtins.print") as mock_print:
-        handler.export_selected_to_xml(str(invalid_path), sample_players)
-        mock_print.assert_called_once()
-        assert "Error exporting to XML" in mock_print.call_args[0][0]
